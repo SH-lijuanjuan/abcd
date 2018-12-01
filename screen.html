@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {margin:0;padding:0;}
+        canvas {background-color: #cccccc}
+    </style>
+
+</head>
+<body>
+<canvas></canvas>
+<script>
+    let oC=document.querySelector("canvas");
+    let pen=oC.getContext('2d');
+
+    let owidth=document.documentElement.clientWidth;
+    let oheight=document.documentElement.clientHeight;
+
+    oC.width=owidth;
+    oC.height=oheight;
+
+    let arr=[];
+    let arr2=[];
+
+    for(var i=1;i<6;i++){
+        arr.push({
+            x:rad(0,oC.width),
+            y:rad(0,oC.height),
+            speedX:rad(-10,10),
+            speedY:rad(-10,10)
+        })
+    }
+    // console.log(arr);
+
+
+
+    function jzh(n){
+        return n*Math.PI/180;
+    }
+    function rad(n,m){
+        return parseInt(Math.random()*(m-n)+n);
+    }
+    function hzj(n){
+        return n*180/Math.PI;
+    }
+
+    setInterval(function(){
+        pen.clearRect(0,0,oC.width,oC.height);
+
+        //    运动；
+        for(let i=0;i<arr.length;i++){
+            arr[i].x+=arr[i].speedX;
+            arr[i].y+=arr[i].speedY;
+
+            if(arr[i].x<=0){
+                arr[i].speedX*=-1;
+            }
+            if(arr[i].x>=oC.width){
+                arr[i].speedX*=-1
+            }
+            if(arr[i].y<=0){
+                arr[i].speedY*=-1
+            }
+            if(arr[i].y>=oC.height){
+                arr[i].speedY*=-1
+            }
+            drawPoint(arr[i])
+        }
+        pen.strokeStyle='red';
+        pen.beginPath();
+        pen.moveTo(arr[0].x,arr[0].y);
+        for(let i=1;i<arr.length;i++){
+            pen.lineTo(arr[i].x,arr[i].y)
+        }
+        pen.closePath();
+        pen.stroke();
+
+        //    收集尾巴；
+        let arrL=[];
+
+        for(let j=0;j<arr.length;j++){
+            arrL.push({
+                x:arr[j].x,
+                y:arr[j].y
+            })
+        }
+
+
+        let len=50;
+        arr2.push(arrL);
+        // console.log(arr2);
+        if(arr2.length>=len){
+            arr2.shift()
+        }
+
+        //    绘制
+        for(let i=0;i<arr2.length;i++){
+            pen.strokeStyle='yellow';
+            pen.beginPath();
+
+            pen.moveTo(arr2[i][0].x,arr2[i][0].y);
+            for(let j=1;j<arr2[i].length;j++){
+                pen.lineTo(arr2[i][j].x,arr2[i][j].y);
+            }
+            pen.closePath();
+            pen.stroke()
+        }
+    },16);
+
+
+    function drawPoint(p) {
+        pen.fillStyle = 'white';
+        pen.fillRect(p.x - 10 / 2, p.y - 10 / 2, 10, 10);
+    }
+
+
+</script>
+</body>
+</html>
